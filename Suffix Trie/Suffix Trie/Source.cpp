@@ -12,7 +12,7 @@ public:
 
 	linkedlistNode() {
 		this->next = NULL;
-		this->child = NULL;
+		this->child = new linkedlistNode*;
 	}
 
 };
@@ -77,14 +77,15 @@ public:
 			return;
 		}
 
-		cout << "inserting: " << input[input.size() - index] << endl;
-
 		if (Node == NULL) {
 			Node = new linkedlistNode;
 			Node->value = input[input.size() - index];
 			insert(Node->next, input, index - 1);
 		}
-		else if (Node->next == NULL) {
+		else if (Node->value == input[input.length() - index]) {
+			insert(Node->next, input, index - 1);
+		}
+		else if (Node->next == NULL && Node->value != input[input.length() - index]) {
 			Node->next = new linkedlistNode;
 			Node->next->value = input[input.size() - index];
 			insert(Node->next, input, index - 1);
@@ -129,15 +130,18 @@ public:
 	}
 
 	void print() {
-		/*linkedlistNode* temp;
+		linkedlistNode* temp;
 		for (int i = 0; i < arr.size; i++) {
-			temp = arr.root[i]->next;
 			cout << arr.root[i]->value;
+			temp = arr.root[i]->next;
+			while (temp != NULL) {
+				cout << temp->value;
+				temp = temp->next;
+			}
+			cout << endl;
 			
-		}*/
-		cout << endl;
-		cout << arr.root[1]->value << arr.root[1]->next->value  << endl;
-		//cout << arr.root[1]->child[0]->value << arr.root[1]->child[0]->next->value << endl;
+		}
+		
 	}
 };
 
@@ -148,7 +152,7 @@ int main()
     // Construct a suffix trie containing all suffixes of "bananabanaba$"
 
     //            0123456789012
-    SuffixTrie t("bana$");
+    SuffixTrie t("banana$");
 	t.print();
 
    // t.Search("ana"); // Prints: 1 3 7
