@@ -101,13 +101,8 @@ public:
 		}
 		else {
 			linkedlistNode* temp = checkChild(Node->child, input, index);
-			if (temp == NULL) {
-			insert(Node, input, index - 1);
-			}
-			else
-			{
-				insert(Node->next, input, index - 1);
-			}
+			insert(temp, input, index - 1);
+			
 		}
 		
 	}
@@ -116,14 +111,17 @@ public:
 
 		int i = 0;
 
-		if (Node != NULL) {
-			while (Node[i] != NULL) {
-				if (Node[i]->value == input[input.size() - index]) {
-					return Node[i];
-				}
-				i++;
+
+		while (true) {
+			if (Node[i] == NULL) {
+				break;
 			}
+			if (Node[i]->value == input[input.size() - index]) {
+				return Node[i];
+			}
+			i++;
 		}
+
 
 		return Node[i];
 
@@ -152,7 +150,7 @@ int main()
     // Construct a suffix trie containing all suffixes of "bananabanaba$"
 
     //            0123456789012
-    SuffixTrie t("banana$");
+    SuffixTrie t("bananabanaba$");
 	t.print();
 
    // t.Search("ana"); // Prints: 1 3 7
