@@ -9,6 +9,7 @@ public:
 	char value;
 	linkedlistNode* next;
 	linkedlistNode** child;
+	int childeSize = 0;
 
 	linkedlistNode() {
 		this->next = NULL;
@@ -97,34 +98,40 @@ public:
 			Node->child[0]->value = input[input.length() - index];
 			Node->child[0]->next = NULL;
 			Node->child[0]->child = NULL;
-			Node->child[1] = NULL;
+			Node->childeSize++;
 			insert(Node->child[0], input, index - 1);
 		}
 		else {
-			linkedlistNode* temp = checkChild(Node->child, input, index);
-			insert(temp, input, index - 1);
-			
+			checkChild(Node->child, input, index, Node->childeSize);
+
 		}
 		
 	}
 
-	linkedlistNode* checkChild(linkedlistNode** Node, string input, int index) {
+	void checkChild(linkedlistNode** Node, string input, int index,int &nodeSize) {
 
-		int i = 0;
+		bool exists = false;
+		int at = 0;
 
-		while (true) {
-
-			if (Node[i] == NULL) {
-				return Node[i];
+		for (int i = 0; i < nodeSize; i++) {
+			if (Node[i]->value == input[input.size() - index]) {
+				exists = true;
+				at = i;
+				break;
 			}
-			else if (Node[i]->value == input[input.size() - index]) {
-				return Node[i];
-			}
-			i++;
 		}
 
-
-		//return Node[i];
+		if (exists == false) {
+			Node[nodeSize] = new linkedlistNode;
+			Node[nodeSize]->value = input[input.length() - index];
+			Node[nodeSize]->child = NULL;
+			Node[nodeSize]->next = NULL;
+			insert(Node[nodeSize], input, index - 1);
+			nodeSize++;
+		}
+		else if (exists == true) {
+			insert(Node[at], input, index - 1);
+		}
 
 	}
 
@@ -140,7 +147,6 @@ public:
 			cout << endl;
 			
 		}
-		cout << arr.root[1]->child[0]->value  << endl;
 		
 	}
 };
@@ -152,7 +158,7 @@ int main()
     // Construct a suffix trie containing all suffixes of "bananabanaba$"
 
     //            0123456789012
-    SuffixTrie t("bananaba$");
+    SuffixTrie t("bananabanaba$");
 	t.print();
 
    // t.Search("ana"); // Prints: 1 3 7

@@ -1,1 +1,3 @@
-﻿  Suffix Trie.vcxproj -> D:\Collage\Data Structure II\Assignments\SuffixTrie\Suffix Trie\Debug\Suffix Trie.exe
+﻿  Source.cpp
+D:\Collage\Data Structure II\Assignments\SuffixTrie\Suffix Trie\Suffix Trie\Source.cpp(41,21): warning C4018: '<=': signed/unsigned mismatch
+  Suffix Trie.vcxproj -> D:\Collage\Data Structure II\Assignments\SuffixTrie\Suffix Trie\Debug\Suffix Trie.exe
