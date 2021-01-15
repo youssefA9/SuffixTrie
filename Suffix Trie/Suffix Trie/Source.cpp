@@ -97,6 +97,7 @@ public:
 			Node->child[0]->value = input[input.length() - index];
 			Node->child[0]->next = NULL;
 			Node->child[0]->child = NULL;
+			Node->child[1] = NULL;
 			insert(Node->child[0], input, index - 1);
 		}
 		else {
@@ -111,19 +112,19 @@ public:
 
 		int i = 0;
 
-
 		while (true) {
+
 			if (Node[i] == NULL) {
-				break;
+				return Node[i];
 			}
-			if (Node[i]->value == input[input.size() - index]) {
+			else if (Node[i]->value == input[input.size() - index]) {
 				return Node[i];
 			}
 			i++;
 		}
 
 
-		return Node[i];
+		//return Node[i];
 
 	}
 
@@ -139,6 +140,7 @@ public:
 			cout << endl;
 			
 		}
+		cout << arr.root[1]->child[0]->value  << endl;
 		
 	}
 };
@@ -150,7 +152,7 @@ int main()
     // Construct a suffix trie containing all suffixes of "bananabanaba$"
 
     //            0123456789012
-    SuffixTrie t("bananabanaba$");
+    SuffixTrie t("bananaba$");
 	t.print();
 
    // t.Search("ana"); // Prints: 1 3 7
