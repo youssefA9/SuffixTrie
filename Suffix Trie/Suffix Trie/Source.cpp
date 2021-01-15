@@ -44,35 +44,6 @@ public:
 		}
 	}
 
-	//Check if Initial Char in the sub string exists and if not it creates a node that starts with it
-	/*void firstInsert(string input, int index) {
-		bool exists = false;
-		int at = 0;
-
-		for (int i = 0; i < arr.size; i++) {
-			if (arr.root[i]->value == input[input.size() - index]) {
-				exists = true;
-				at = i;
-				break;
-			}
-		}
-
-		if (exists == false) {
-			arr.root[arr.size] = new linkedlistNode;
-			arr.root[arr.size]->value = input[input.length() - index];
-			arr.root[arr.size]->child = NULL;
-			arr.root[arr.size]->next = NULL;
-			insert(arr.root[arr.size], input, index - 1);
-			arr.size++;
-		}
-		else if (exists == true) {
-			insert(arr.root[at], input, index - 1);
-		}
-
-
-	}*/
-
-
 	void insert(linkedlistNode* Node, string input, int index, int orgIndex) {
 		//Base Case to stop the reccursive function
 		if (index == 0) {
@@ -196,18 +167,22 @@ public:
 
 		int* carry = new int[1];
 		int size = 0;
-		//carry = getIndex(Node, carry, size);
+		carry = getIndex(Node, carry, size);
 
 		for (int i = 0; i < size; i++) {
-			cout << carry[i];
+			cout << carry[i] << " ";
 		}
 
 	}
 
 	int* getIndex(linkedlistNode* Node, int* carry, int& size) {
+		
+		if (Node == NULL) {
+			return carry;
+		}
 
 		if (Node->value == '$') {
-			int* temp = new int[size];
+			int* temp = new int[size + 2];
 			for (int i = 0; i < size; i++) {
 				temp[i] = carry[i];
 			}
@@ -218,16 +193,12 @@ public:
 			return carry;
 		}
 		else {
-			if (Node->childSize > 0) {
-				for (int i = 0; i < Node->childSize; i++) {
-					carry = getChildIndex(Node->child[i], carry, size);
-				}
+			carry = getIndex(Node->next, carry, size);
+			for (int i = 0; i < Node->childSize; i++) {
+				carry = getChildIndex(Node->child[i], carry, size);
 			}
-
-			return getIndex(Node->next, carry, size);
+			return carry;
 		}
-
-
 	}
 
 	int* getChildIndex(linkedlistNode* Node, int* carry, int& size) {
@@ -292,7 +263,7 @@ int main()
 	//	Counter n = 3
 	//	Counter $ = 1
 
-		t.Search("g"); // Prints: 1 3 7
+		t.Search("h"); // Prints: 1 3 7
     //	t.Search("naba"); // Prints: 4 8
 
     return 0;
