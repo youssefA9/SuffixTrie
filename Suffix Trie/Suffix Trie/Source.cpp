@@ -10,7 +10,7 @@ public:
 	linkedlistNode* next;
 	linkedlistNode** child;
 	int childSize = 0;
-	int branch_index = -1;
+	int branchNum = -1;
 
 	linkedlistNode() {
 		this->next = NULL;
@@ -32,7 +32,7 @@ class SuffixTrie {
 
 public:
 
-	SuffixTrie(){}
+	SuffixTrie() {}
 
 	SuffixTrie(string input) {
 		if (arr.root == NULL) {
@@ -40,12 +40,12 @@ public:
 		}
 
 		for (int i = 1; i <= input.size(); i++) {
-			firstInsert(input, i);
+			split(arr.root, input, i, arr.size, i);
 		}
 	}
 
 	//Check if Initial Char in the sub string exists and if not it creates a node that starts with it
-	void firstInsert(string input, int index) {
+	/*void firstInsert(string input, int index) {
 		bool exists = false;
 		int at = 0;
 
@@ -69,47 +69,41 @@ public:
 			insert(arr.root[at], input, index - 1);
 		}
 
-		
-	}
+
+	}*/
 
 
-	void insert(linkedlistNode* Node, string input, int index) {
+	void insert(linkedlistNode* Node, string input, int index, int orgIndex) {
 		//Base Case to stop the reccursive function
 		if (index == 0) {
 			return;
 		}
 
-		if (Node == NULL) {
-			Node = new linkedlistNode;
-			Node->value = input[input.size() - index];
-			insert(Node->next, input, index - 1);
-		}
-		else if (Node->value == input[input.length() - index]) {
-			insert(Node->next, input, index - 1);
-		}
-		else if (Node->next == NULL && Node->value != input[input.length() - index]) {
+		if (Node->next == NULL) {
+
 			Node->next = new linkedlistNode;
 			Node->next->value = input[input.size() - index];
-			insert(Node->next, input, index - 1);
+			if (input[input.size() - index] == '$') {
+				Node->next->branchNum = orgIndex - 1;
+			}
+			insert(Node->next, input, index - 1, orgIndex);
 		}
-		else if (Node->child == NULL) {
-			
-			Node->child = new linkedlistNode*;
-			Node->child[0] = new linkedlistNode;
-			Node->child[0]->value = input[input.length() - index];
-			Node->child[0]->next = NULL;
-			Node->child[0]->child = NULL;
-			Node->childSize++;
-			insert(Node->child[0], input, index - 1);
-		}
-		else {
-			checkChild(Node->child, input, index, Node->childSize);
+		else if (Node->next->value != input[input.length() - index]) {
+
+			if (Node->child == NULL) {
+				Node->child = new linkedlistNode*;
+			}
+			split(Node->child, input, index, Node->childSize, orgIndex);
 
 		}
-		
+		else if (Node->next->value == input[input.length() - index]) {
+			insert(Node->next, input, index - 1, orgIndex);
+		}
+
+
 	}
 
-	void checkChild(linkedlistNode** Node, string input, int index,int &nodeSize) {
+	void split(linkedlistNode** Node, string input, int index, int& nodeSize, int orgIndex) {
 
 		bool exists = false;
 		int at = 0;
@@ -125,16 +119,53 @@ public:
 		if (exists == false) {
 			Node[nodeSize] = new linkedlistNode;
 			Node[nodeSize]->value = input[input.length() - index];
+			if (input[input.length() - index] == '$') {
+				Node[nodeSize]->branchNum = orgIndex - 1;
+			}
 			Node[nodeSize]->child = NULL;
 			Node[nodeSize]->next = NULL;
-			insert(Node[nodeSize], input, index - 1);
+			insert(Node[nodeSize], input, index - 1, index);
 			nodeSize++;
 		}
 		else if (exists == true) {
-			insert(Node[at], input, index - 1);
+			insert(Node[at], input, index - 1, orgIndex - at + 1);
 		}
 
 	}
+
+	linkedlistNode* searchExistance(linkedlistNode* Node, string input, int index) {
+
+		if (index + 1 == input.size()) {
+			return Node;
+		}
+		else {
+
+			if (Node->value == input[index]) {
+				if (Node->next == NULL) {
+					return NULL;
+				}
+				if (Node->next->value == input[index + 1]) {
+					return searchExistance(Node->next, input, index + 1);
+				}
+				else {
+					int j = 0;
+					for (j = 0; j < Node->childSize; j++) {
+						if (Node->child[j]->value == input[index]) {
+							return searchExistance(Node->child[j], input, index + 1);
+							break;
+						}
+					}
+					
+					return NULL;
+					
+				}
+
+			}
+		}
+
+	}
+
+
 
 	void Search(string input) {
 		bool flag = false;
@@ -148,28 +179,24 @@ public:
 			i++;
 		}
 
-		linkedlistNode* Node = arr.root[i];
+	
+		linkedlistNode* Node;
 
-		int j = 1;
-		while (Node != NULL) {
-			if (j < input.size() - 1 && Node->value != input[j]) {
-				flag = false;
-				break;
-			}
-			Node = Node->next;
+		if (i == arr.size) {
+			Node = NULL;
+		}
+		else {
+			Node = searchExistance(arr.root[i], input, 0);
 		}
 
-		if (flag == false) {
+		if (Node == NULL) {
 			cout << "Pattern Not Found" << endl;
 			return;
 		}
 
-		Node = arr.root[i];
-
-
 		int* carry = new int[1];
 		int size = 0;
-		carry = getIndex(Node, carry, size);
+		//carry = getIndex(Node, carry, size);
 
 		for (int i = 0; i < size; i++) {
 			cout << carry[i];
@@ -186,7 +213,7 @@ public:
 			}
 			delete[] carry;
 			carry = temp;
-			carry[size] = Node->branch_index;
+			carry[size] = Node->branchNum;
 			size++;
 			return carry;
 		}
@@ -217,17 +244,21 @@ public:
 				cout << temp->value;
 				if (temp->childSize > 0) {
 					for (int j = 0; j < temp->childSize; j++) {
-						printchild(temp->child[j]);
+						//printchild(temp->child[j]);
 					}
+				}
+				if (temp->next == NULL) {
+					cout << temp->branchNum;
 				}
 				temp = temp->next;
 			}
+			
 			cout << endl;
 			
 		}
 
-		cout << arr.root[2]->next->value << endl;
-		
+		//cout << arr.root[3]->next->next->next->child[0]->value << endl;
+		//cout << arr.root[2]->child[0]->next->next->branchNum;
 	}
 
 	void printchild(linkedlistNode* Node) {
@@ -250,10 +281,10 @@ public:
 
 int main()
 {
-    // Construct a suffix trie containing all suffixes of "bananabanaba$"
+    // Construct a suffix trie containing all suffixes of "nabanaba$"
 
     //            0123456789012
-    SuffixTrie t("bananabanaba$");
+    SuffixTrie t("ggh$");
 	t.print();
 
 	//	Counter a = 6
@@ -261,7 +292,7 @@ int main()
 	//	Counter n = 3
 	//	Counter $ = 1
 
-	//	t.Search("ana"); // Prints: 1 3 7
+		t.Search("g"); // Prints: 1 3 7
     //	t.Search("naba"); // Prints: 4 8
 
     return 0;

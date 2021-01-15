@@ -1,1 +1,4 @@
-﻿  Suffix Trie.vcxproj -> D:\Collage\Data Structure II\Assignments\SuffixTrie\Suffix Trie\Debug\Suffix Trie.exe
+﻿  Source.cpp
+D:\Collage\Data Structure II\Assignments\SuffixTrie\Suffix Trie\Suffix Trie\Source.cpp(42,21): warning C4018: '<=': signed/unsigned mismatch
+D:\Collage\Data Structure II\Assignments\SuffixTrie\Suffix Trie\Suffix Trie\Source.cpp(166): warning C4715: 'SuffixTrie::searchExistance': not all control paths return a value
+  Suffix Trie.vcxproj -> D:\Collage\Data Structure II\Assignments\SuffixTrie\Suffix Trie\Debug\Suffix Trie.exe
