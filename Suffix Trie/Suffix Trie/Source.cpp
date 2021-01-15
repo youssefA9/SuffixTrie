@@ -9,7 +9,8 @@ public:
 	char value;
 	linkedlistNode* next;
 	linkedlistNode** child;
-	int childeSize = 0;
+	int childSize = 0;
+	int branch_index = -1;
 
 	linkedlistNode() {
 		this->next = NULL;
@@ -98,11 +99,11 @@ public:
 			Node->child[0]->value = input[input.length() - index];
 			Node->child[0]->next = NULL;
 			Node->child[0]->child = NULL;
-			Node->childeSize++;
+			Node->childSize++;
 			insert(Node->child[0], input, index - 1);
 		}
 		else {
-			checkChild(Node->child, input, index, Node->childeSize);
+			checkChild(Node->child, input, index, Node->childSize);
 
 		}
 		
@@ -135,6 +136,78 @@ public:
 
 	}
 
+	void Search(string input) {
+		bool flag = false;
+		int i = 0;
+
+		while (i < arr.size) {
+			if (arr.root[i]->value == input[0]) {
+				flag = true;
+				break;
+			}
+			i++;
+		}
+
+		linkedlistNode* Node = arr.root[i];
+
+		int j = 1;
+		while (Node != NULL) {
+			if (j < input.size() - 1 && Node->value != input[j]) {
+				flag = false;
+				break;
+			}
+			Node = Node->next;
+		}
+
+		if (flag == false) {
+			cout << "Pattern Not Found" << endl;
+			return;
+		}
+
+		Node = arr.root[i];
+
+
+		int* carry = new int[1];
+		int size = 0;
+		carry = getIndex(Node, carry, size);
+
+		for (int i = 0; i < size; i++) {
+			cout << carry[i];
+		}
+
+	}
+
+	int* getIndex(linkedlistNode* Node, int* carry, int& size) {
+
+		if (Node->value == '$') {
+			int* temp = new int[size];
+			for (int i = 0; i < size; i++) {
+				temp[i] = carry[i];
+			}
+			delete[] carry;
+			carry = temp;
+			carry[size] = Node->branch_index;
+			size++;
+			return carry;
+		}
+		else {
+			if (Node->childSize > 0) {
+				for (int i = 0; i < Node->childSize; i++) {
+					carry = getChildIndex(Node->child[i], carry, size);
+				}
+			}
+
+			return getIndex(Node->next, carry, size);
+		}
+
+
+	}
+
+	int* getChildIndex(linkedlistNode* Node, int* carry, int& size) {
+		carry = getIndex(Node, carry, size);
+		return carry;
+	}
+
 	void print() {
 		linkedlistNode* temp;
 		for (int i = 0; i < arr.size; i++) {
@@ -142,12 +215,34 @@ public:
 			temp = arr.root[i]->next;
 			while (temp != NULL) {
 				cout << temp->value;
+				if (temp->childSize > 0) {
+					for (int j = 0; j < temp->childSize; j++) {
+						printchild(temp->child[j]);
+					}
+				}
 				temp = temp->next;
 			}
 			cout << endl;
 			
 		}
+
+		cout << arr.root[2]->next->value << endl;
 		
+	}
+
+	void printchild(linkedlistNode* Node) {
+			
+		while (Node != NULL) {
+			cout << Node->value;
+			if (Node->childSize > 0) {
+				for (int i = 0; i < Node->childSize; i++) {
+					printchild(Node->child[i]);
+				}
+				Node = Node->next;
+			}
+			cout << endl;
+
+		}
 	}
 };
 
@@ -161,11 +256,13 @@ int main()
     SuffixTrie t("bananabanaba$");
 	t.print();
 
-   // t.Search("ana"); // Prints: 1 3 7
-    //t.Search("naba"); // Prints: 4 8
+	//	Counter a = 6
+	//	Counter b = 3
+	//	Counter n = 3
+	//	Counter $ = 1
+
+	//	t.Search("ana"); // Prints: 1 3 7
+    //	t.Search("naba"); // Prints: 4 8
 
     return 0;
 }
-
-
-
